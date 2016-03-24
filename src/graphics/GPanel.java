@@ -9,7 +9,6 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-import main.Config;
 import main.Driver;
 import main.Fork;
 import main.Philosopher;
@@ -26,10 +25,23 @@ public class GPanel extends JPanel {
 	 */
 	private static ArrayList<Fork> forks = Driver.forks;
 	
+	/**
+	 * Diameter of the table
+	 */
 	private int d;
 	
+	/**
+	 * Load boolean
+	 */
 	private boolean load = false;
 	
+	private Graphics2D g2d;
+
+	/**
+	 * Create a new graphics panel
+	 * 
+	 * @param d Diameter of the table
+	 */
 	public GPanel(int d) {
 		this.d = d;
 	}
@@ -38,18 +50,17 @@ public class GPanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		 super.paintComponent(g);
 		 setBackground(Color.WHITE);
-		 Graphics2D g2d = (Graphics2D)g;
+		 g2d = (Graphics2D)g;
 		 
 	     drawTable(g2d);
 	}
 	
-	public void drawTable(Graphics2D g2d) {
-		if (!load) {
-			createPhilosophers(g2d, this.getWidth()/2, this.getHeight()/2, d/2);
-			createForks(g2d, this.getWidth()/2, this.getHeight()/2, d/2);
-			load = true;
-		}
-		
+	/**
+	 * Draws the graphics
+	 * 
+	 * @param g2d
+	 */
+	public void drawTable(Graphics2D g2d) {		
 		//Table
 		{
 			double x = this.getWidth()/2 - (d/2), y = this.getHeight()/2 - (d/2);
@@ -58,7 +69,7 @@ public class GPanel extends JPanel {
 		}
 		
 		//Philosophers and Forks
-		{
+		if (load) {
 			for (Philosopher philosopher : philosophers) {
 				Ellipse2D.Double circle = new Ellipse2D.Double(
 						philosopher.getCircle().getX(), 
@@ -67,6 +78,8 @@ public class GPanel extends JPanel {
 						philosopher.getCircle().getDiameter());
 				g2d.setColor(philosopher.getCircle().getColor());
 				g2d.fill(circle);
+				
+				g2d.drawString(philosopher.getId() + "", (int) philosopher.getCircle().getX(), (int) philosopher.getCircle().getY());
 			}
 			
 			for (Fork fork : forks) {
@@ -77,6 +90,8 @@ public class GPanel extends JPanel {
 						fork.getFg().getY2());
 				g2d.setColor(Color.GRAY);
 	            g2d.draw(l);
+	            
+	            g2d.drawString(fork.getId() + "", (int) fork.getFg().getX(), (int) fork.getFg().getY());
 			}
 		}
 	}
@@ -89,10 +104,10 @@ public class GPanel extends JPanel {
 	 * @param cy
 	 * @param r
 	 */
-	public void createPhilosophers(Graphics2D g2d, double cx, double cy, double r) {
+	public void createPhilosophers(Graphics2D g2d, double cx, double cy, double r, int total) {
 		for (Philosopher philosopher : philosophers) {
-			double d = (double) this.d / Config.TOTAL_PHILOSOPHERS;
-			double rad = (double) 360 / Config.TOTAL_PHILOSOPHERS * (Math.PI / 180) * philosopher.getId();
+			double d = (double) this.d / total;
+			double rad = (double) 360 / total * (Math.PI / 180) * philosopher.getId();
 			double x = (double) cx + (r + 10) * Math.cos(rad) - d/2, y = (double) cy + (r + 10) * Math.sin(rad) - d/2;
 			
 			Ellipse2D.Double circle = new Ellipse2D.Double(x, y, d, d);
@@ -111,9 +126,9 @@ public class GPanel extends JPanel {
 	 * @param cy
 	 * @param r
 	 */
-	public void createForks(Graphics2D g2d, double cx, double cy, double r) {
+	public void createForks(Graphics2D g2d, double cx, double cy, double r, int total) {
 		for (Fork fork : forks) {
-			double length = (double) this.d / Config.TOTAL_PHILOSOPHERS;
+			double length = (double) this.d / total;
 			
 			//Min+Max lengths
 			if (length > 50)
@@ -121,8 +136,8 @@ public class GPanel extends JPanel {
 			else if (length < 15)
 				length = 15;
 			
-			double rad = (double) 360 / Config.TOTAL_PHILOSOPHERS * (Math.PI / 180) * fork.getId() + 
-					(360 / Config.TOTAL_PHILOSOPHERS * (Math.PI / 180) / 2);
+			double rad = (double) 360 / total * (Math.PI / 180) * fork.getId() + 
+					(360 / total * (Math.PI / 180) / 2);
 			double x = (double) cx + (r - 5) * Math.cos(rad), y = (double) cy + (r - 5) * Math.sin(rad);
 			double x2 = (double) cx + (r - length) * Math.cos(rad), y2 = (double) cy + (r - length) * Math.sin(rad);
 			
@@ -130,11 +145,24 @@ public class GPanel extends JPanel {
 			g2d.setColor(Color.GRAY);
             g2d.draw(l);
 			
-			//g2d.drawpo
-			
 			fork.setFg(new ForkGraphic(new ForkGraphic(null, length, rad, x, y, x2, y2, cx, cy, r, fork.getId()),
 					length, rad, x, y, x2, y2, cx, cy, r, fork.getId()));
 		}
-		
+	}
+	
+	public boolean getLoad() {
+		return load;
+	}
+
+	public void setLoad(boolean load) {
+		this.load = load;
+	}
+
+	public Graphics2D getG2d() {
+		return g2d;
+	}
+
+	public void setG2d(Graphics2D g2d) {
+		this.g2d = g2d;
 	}
 }

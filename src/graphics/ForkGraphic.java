@@ -1,7 +1,5 @@
 package graphics;
 
-import main.Config;
-
 /**
  * Holds the details for Fork Graphics
  *
@@ -39,23 +37,19 @@ public class ForkGraphic {
 	}
 
 	/**
-	 * Move the left fork in closer to the Philosopher
+	 * Move the fork in closer to the Philosopher
+	 * 
+	 * @param total Total forks
+	 * @param option True is for the right fork, false for left fork
 	 */
-	public void movePosi() {
-		radian = (double) 360 / Config.TOTAL_PHILOSOPHERS * (Math.PI / 180) * idMultiplier + 
-				(360 / Config.TOTAL_PHILOSOPHERS * (Math.PI / 180) / 2  / 2) * 3;
-		x = (double) cx + (r - 5 - (length/2)) * Math.cos(radian);
-		y = (double) cy + (r - 5 - (length/2)) * Math.sin(radian);
-		x2 = (double) cx + (r - length - (length/2)) * Math.cos(radian);
-		y2 = (double) cy + (r - length - (length/2)) * Math.sin(radian);
-	}
-
-	/**
-	 * Move the right fork in closer to the Philosopher
-	 */
-	public void moveNeg() {
-		radian = (double) 360 / Config.TOTAL_PHILOSOPHERS * (Math.PI / 180) * idMultiplier + 
-				(360 / Config.TOTAL_PHILOSOPHERS * (Math.PI / 180) / 2 / 2);
+	public void moveFork(int total, boolean option) {
+		if (option)
+			radian = (double) 360 / total * (Math.PI / 180) * idMultiplier + 
+				(360 / total * (Math.PI / 180) / 2 / 2);
+		else
+			radian = (double) 360 / total * (Math.PI / 180) * idMultiplier + 
+				(360 / total * (Math.PI / 180) / 2  / 2) * 3;
+		
 		x = (double) cx + (r - 5 - (length/2)) * Math.cos(radian);
 		y = (double) cy + (r - 5 - (length/2)) * Math.sin(radian);
 		x2 = (double) cx + (r - length - (length/2)) * Math.cos(radian);

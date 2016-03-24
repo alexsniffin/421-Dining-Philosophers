@@ -28,8 +28,6 @@ public class Driver {
 	 * A list of Forks used as acting as Locks
 	 */
 	public static ArrayList<Fork> forks = new ArrayList<Fork>();
-	
-	private static ExecutorService es = null;
 
 	/**
 	 * Initialize the Dining Philosophers
@@ -39,58 +37,28 @@ public class Driver {
 	 */
 	public static void main(String[] args) throws InterruptedException {
 		//Do nothing if we haven't loaded any Philosophers in from ./names.dat
-		if (Config.TOTAL_PHILOSOPHERS > 0)
-			try {
-				
-				System.out.println("[  Setting up Forks and Philosophers  ]");
-				
-				{
-					es = Executors.newFixedThreadPool(Config.TOTAL_PHILOSOPHERS);
-					
-					//Create the same amount of Forks as Philosophers
-					for (int i = 0; i < Config.TOTAL_PHILOSOPHERS; i++)
-						forks.add(new Fork(i));
-		
-					//Create our Philosophers
-					for (int i = 0; i < Config.TOTAL_PHILOSOPHERS; i++)
-						philosophers.add(new Philosopher(i, Config.NAMES[i], true, forks.get((i + (Config.TOTAL_PHILOSOPHERS - 1)) % Config.TOTAL_PHILOSOPHERS), forks.get(i)));
-					
-					//Create a separate thread for drawing
-					Executors.newSingleThreadExecutor().execute(
-						new Runnable() {
-						    @Override 
-						    public void run() {
-						        GUI gui = new GUI("Dining Philosophers", new Dimension(600, 500));
-						        
-						        while(true) {
-						        	//TO-DO: Check if we're running
-						        	gui.getDrawing().repaint();
-						        }
-						    }
-						}
-					);
-					
-					Thread.sleep(3000);
-					
-					//Start the separate threads
-					philosophers.forEach(philosophers -> es.execute(philosophers));
-		
-					Thread.sleep(30000);
+		if (Config.TOTAL_PHILOSOPHERS > 0) {	
+			//Create a separate thread for drawing
+			Executors.newSingleThreadExecutor().execute(
+				new Runnable() {
+				    @Override 
+				    public void run() {
+				        GUI gui = new GUI("Dining Philosophers", new Dimension(800, 650));
+				        
+				        while(true) {
+				        	gui.getDrawing().repaint();
+				        	
+				        	if (GUI.getEs() != null)
+				        		if (!GUI.getEs().isShutdown()) {
+				        			gui.updateDetails();
+				        			gui.repaint();
+				        		}
+				        }
+				    }
 				}
-				
-				System.out.println("[  Closing threads  ]");
-				
-				//End each Philosopher thread
-				philosophers.forEach(philosophers -> philosophers.setHungry(false));
-				
-			} finally {
-				es.shutdown();
-	
-				while (!es.isTerminated()) {
-					Thread.sleep(1000);
-				}
-				System.out.println("[  Closing  ]");
-			}
+			);
+		} else
+			System.err.println("No Philosophers were loaded from ./names.dat");
 	}
 	
 	/**

@@ -24,12 +24,17 @@ public class Fork {
 	/**
 	 * Sets up a lock for this fork
 	 */
-	private Lock fork = new ReentrantLock();
+	private Lock forkLock = new ReentrantLock();
 	
 	/**
 	 * The reference to the fork graphic object
 	 */
 	private ForkGraphic fg;
+	
+	/**
+	 * The id of whoever is using this fork
+	 */
+	private int ownerId = -1;
 
 	/**
 	 * Creates a new Fork
@@ -47,7 +52,7 @@ public class Fork {
 	 * @throws InterruptedException Error in concurrency
 	 */
 	public boolean pickUp() throws InterruptedException {
-		if (fork.tryLock(Config.WAIT_FOR_FORK, TimeUnit.MILLISECONDS))
+		if (forkLock.tryLock(Config.WAIT_FOR_FORK, TimeUnit.MILLISECONDS))
 			return true;
 		
 		return false;
@@ -57,7 +62,7 @@ public class Fork {
 	 * Put the fork down and unlock it
 	 */
 	public void putDown() {
-		fork.unlock();
+		forkLock.unlock();
 	}
 
 	public int getId() {
@@ -75,5 +80,21 @@ public class Fork {
 
 	public void setFg(ForkGraphic fg) {
 		this.fg = fg;
+	}
+
+	public Lock getForkLock() {
+		return forkLock;
+	}
+
+	public void setForkLock(Lock forkLock) {
+		this.forkLock = forkLock;
+	}
+
+	public int getOwnerId() {
+		return ownerId;
+	}
+
+	public void setOwnerId(int ownerId) {
+		this.ownerId = ownerId;
 	}
 }
