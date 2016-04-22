@@ -104,9 +104,11 @@ public class Philosopher implements Runnable {
 	}
 	
 	/**
-	 * Picks a fork to attempt picking up randomly
+	 * Starts by trying to pick up the left fork, because
+	 * the method is generic, option could be added to try
+	 * the right fork.
 	 * 
-	 * @param total Total Philsophers at the table
+	 * @param total Total Philosophers at the table
 	 * @throws InterruptedException Error in concurrency
 	 */
 	public void chooseFork(int total) throws InterruptedException {
@@ -115,12 +117,21 @@ public class Philosopher implements Runnable {
 		status = "Thinking";
 	}
 	
+	/**
+	 * A generic method for picking up forks, can start with the left or right
+	 * 
+	 * @param f1 First fork to try picking up
+	 * @param f2 Second fork to try picking up
+	 * @param total Total Philosophers at the table
+	 * @throws InterruptedException Error in concurrency
+	 */
 	public void pickUpForks(Fork f1, Fork f2, int total) throws InterruptedException {
 		if (f1.pickUp()) {
 			f1.getFg().moveFork(total, true);
 			f1.setOwnerId(id);
 			status = "Waiting";
 			circle.setColor(Color.ORANGE);
+			
 			if (f2.pickUp()) {
 				f2.getFg().moveFork(total, false);
 				f2.setOwnerId(id);
@@ -134,18 +145,31 @@ public class Philosopher implements Runnable {
 					flipCoin(f1, f2, total, false);
 			}
 			
+			//Should be done eating or waiting, put the fork back down
 			if (f1.getOwnerId() == id) {
 				f1.getFg().original();
 				f1.putDown();
 			}
 		}
+		//Do nothing and go back to thinking for a bit...
 	}
 
+	/**
+	 * Flips a coin between this Philosopher and his left neighbor
+	 * 
+	 * @param f1 First fork to try picking up
+	 * @param f2 Second fork to try picking up
+	 * @param total Total Philosophers at the table
+	 * @param option True is for the right fork, false for left fork
+	 * @throws InterruptedException Error in concurrency
+	 */
 	public void flipCoin(Fork f1, Fork f2, int total, boolean option) throws InterruptedException {
 		circle.setColor(Color.MAGENTA);
 		leftNeighbor.getCircle().setColor(Color.MAGENTA);
 		
+		//Wait for a small amount to visually show the color change
 		Thread.sleep(250);
+		
 		boolean coin = random.nextBoolean();
 		System.out.println("Flipping: " + name + "[" + id + "] and " + leftNeighbor.getName() + "[" + leftNeighbor.getId() + "]");
 		
@@ -156,9 +180,10 @@ public class Philosopher implements Runnable {
 			f1.getFg().original();
 			f1.putDown();
 			f1.setOwnerId(id - 1);
-			//Now he should pick up our fork
+			//Now he should pick up our fork because he should still be waiting on it
 			
 		} else {
+			circle.setColor(Color.ORANGE);
 			//We win, lets try to get the right fork again
 			if (f2.pickUp()) {
 				f2.getFg().moveFork(total, option);
@@ -167,6 +192,7 @@ public class Philosopher implements Runnable {
 				f2.putDown();
 				f2.getFg().original();
 			}
+			//If not, go back to thinking
 		}
 	}
 

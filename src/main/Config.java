@@ -54,6 +54,8 @@ public final class Config {
 	 * About notification text
 	 */
 	public static final String ABOUT = "A simulation of The Dining Philosophers problem, using the coin flip approach."
+			+ "\nThe colors of each philosopher represent the different states that they are in,"
+			+ "\nwhere red means they are eatting, blue thinking, yellow waiting, and purple flipping a coin."
 			+ "\n\n"
 			+ "Written by: Alexander Sniffin";
 }

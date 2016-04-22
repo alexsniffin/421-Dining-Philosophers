@@ -10,8 +10,8 @@ import java.util.concurrent.Executors;
 
 /**
  * A simple program to demonstrate The Dining Philosophers using
- * the coin flip method. No need for an extra object (waiter) or
- * timestamp are needed.
+ * the coin flip method (probability). The alternate methods are
+ * explained in my paper.
  *
  * @author Alexander Sniffin
  * @project DiningPhilosophers
@@ -25,7 +25,7 @@ public class Driver {
 	public static ArrayList<Philosopher> philosophers = new ArrayList<Philosopher>();
 	
 	/**
-	 * A list of Forks used as acting as Locks
+	 * A list of Forks acting as Locks
 	 */
 	public static ArrayList<Fork> forks = new ArrayList<Fork>();
 
@@ -38,7 +38,7 @@ public class Driver {
 	public static void main(String[] args) throws InterruptedException {
 		//Do nothing if we haven't loaded any Philosophers in from ./names.dat
 		if (Config.TOTAL_PHILOSOPHERS > 0) {	
-			//Create a separate thread for drawing
+			//Create a separate anonymous thread for drawing
 			Executors.newSingleThreadExecutor().execute(
 				new Runnable() {
 				    @Override 
@@ -62,7 +62,8 @@ public class Driver {
 	}
 	
 	/**
-	 * Load in the names.dat file and returns an array of N names
+	 * Load in the ./names.dat file and returns an array of N names
+	 * The maximum should be limited to 16
 	 * 
 	 * @return String array of names
 	 */

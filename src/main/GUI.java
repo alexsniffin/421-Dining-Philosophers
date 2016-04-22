@@ -28,7 +28,8 @@ import javax.swing.event.ChangeListener;
 import graphics.GPanel;
 
 /**
- *
+ * GUI JFrame class for setting the panes, functional interface
+ * and graphics.
  *
  * @author Alexander Sniffin
  * @project DiningPhilosophers
@@ -60,6 +61,9 @@ public class GUI extends JFrame {
 
 	private boolean started = false;
 	
+	/**
+	 * The total amount of Philosophers
+	 */
 	private int total = 5;
 
 	private JButton startStop;
@@ -136,8 +140,8 @@ public class GUI extends JFrame {
 		exit.setActionCommand("exit");
 		about.setActionCommand("about");
 		
-		exit.addActionListener(new GuiActions());
-		about.addActionListener(new GuiActions());
+		exit.addActionListener(new GUIAction());
+		about.addActionListener(new GUIAction());
 		
 		mnFile.add(exit);
 		mnHelp.add(about);
@@ -165,7 +169,7 @@ public class GUI extends JFrame {
 		rightPanel.setLayout(gbl_panel);
 		
 		startStop = new JButton("Start");
-		startStop.addActionListener(new GuiActions());
+		startStop.addActionListener(new GUIAction());
 		startStop.setActionCommand("startOrStop");
 		
 		JLabel lblConfig = new JLabel("Configuration");
@@ -292,7 +296,7 @@ public class GUI extends JFrame {
 		this.started = started;
 	}
 	
-	private class GuiActions implements ActionListener {
+	private class GUIAction implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
